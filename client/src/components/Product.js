@@ -1,28 +1,13 @@
-import { useState } from 'react';
+import ProductActionButtons from './ProductActionButtons'
 
-import EditProduct from './EditProduct';
-
-const Product = ({ product }) => {
-  const [showEdit, setShowEdit] = useState(false);
-  const toggleEdit = () => setShowEdit(!showEdit);
-
+const Product = ({ product, onProductUpdate, onProductDelete, onAddToCart }) => {
   return (
     <div class='product'>
       <div class='product-details'>
         <h3>{product.title}</h3>
         <p class='price'>{product.price}</p>
         <p class='quantity'>{product.quantity} left in stock</p>
-        //TODO: Remove from here and make into separate component
-        <div class='actions product-actions'>
-          <a class='button add-to-cart'>Add to Cart</a>
-          <a class='button edit' onClick={toggleEdit}>
-            Edit
-          </a>
-          {showEdit && <EditProduct product={product} />}
-        </div>
-        <a class='delete-button'>
-          <span>X</span>
-        </a>
+        <ProductActionButtons product={product} onProductUpdate={onProductUpdate} onProductDelete={onProductDelete} onAddToCart={onAddToCart} />
       </div>
     </div>
   );
