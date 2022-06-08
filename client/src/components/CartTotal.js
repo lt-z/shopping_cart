@@ -1,9 +1,11 @@
 const CartTotal = ({ total }) => {
-  return ( 
+  return (
     <tr>
-      <td colspan="3" class="total">Total: ${total}</td>
+      <td colSpan='3' className='total'>
+        Total: ${total}
+      </td>
     </tr>
-   );
-}
- 
+  );
+};
+
 export default CartTotal;

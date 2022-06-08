@@ -2,96 +2,134 @@ import React, { useState, useEffect } from 'react';
 import Shop from './Shop';
 import Products from './Products';
 import AddProduct from './AddProduct';
-import data from '../lib/data';
+// import data from '../lib/data';
 import axios from 'axios';
 
 const App = () => {
   const [products, setProducts] = useState([]);
+  const [cartProducts, setCartProducts] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const {data} = await axios.get('/api/products', {port: 5001});
-      console.log(data);
+      const { data } = await axios.get('/api/products');
       setProducts(data);
-    }
+    };
 
-    fetchProducts()
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      const { data } = await axios.get('/api/cart');
+
+      setCartProducts(data);
+    };
+
+    fetchCart();
   }, []);
 
   const handleProductUpdate = async (updatedProduct) => {
     try {
-      const { data } = await axios({
-        method: 'put',
-        url: `/api/products/${updatedProduct._id}`,
-        data: { ...updatedProduct },
-        port: 5001,
-      })
+      await axios.put(`/api/products/${updatedProduct._id}`, {
+        ...updatedProduct,
+      });
 
       setProducts(
         products.map((product) => {
           if (product._id === updatedProduct._id) {
-            return updatedProduct
+            return updatedProduct;
           } else {
-            return product
+            return product;
           }
         })
-      )
-    } catch(e) {
-      console.error(e)
+      );
+    } catch (e) {
+      console.error(e);
     }
-  }
+  };
 
   const handleProductSubmit = async (newProduct, callback) => {
     try {
-      const { data } = await axios({
-        method: 'post',
-        url: '/api/products',
-        data: { ...newProduct },
-        port: 5001,
-      })
+      const { data } = await axios.post('/api/products', { ...newProduct });
 
-      setProducts(products.concat(data))
+      setProducts(products.concat(data));
       if (callback) {
         callback();
       }
-    } catch(e) {
-      console.error(e)
+    } catch (e) {
+      console.error(e);
     }
-  }
+  };
 
   const handleProductDelete = async (productId) => {
     try {
-      await axios({
-        method: 'delete',
-        url: `/api/products/${productId}`,
-        port: 5001,
-      })
+      await axios.delete(`/api/products/${productId}`);
 
-      setProducts(products.filter(product => product._id !== productId))
-    } catch(e) {
-      console.error(e)
+      setProducts(products.filter((product) => product._id !== productId));
+    } catch (e) {
+      console.error(e);
     }
-  }
+  };
 
-  const handleAddToCartButton = (id) => {
-    // whenthe add to cart button is clicked, then product is added to cart???? 
-      // using the product id, find the product 
-      // then, add that product into the cartproduct
-    const product = products.filter((prod) => prod._id === id)[0];
-    console.log(product);
-    handleAddProductToCart(product)
-  }
+  const handleAddToCartButton = async (id) => {
+    try {
+      const { data } = await axios.post('/api/add-to-cart', {
+        productId: id,
+      });
+      const updatedProduct = data.product;
+      const cartItem = data.item;
 
-  const handleAddProductToCart = (product) => {
-    return product;
-  }
+      setProducts(
+        products.map((product) => {
+          if (product._id === updatedProduct._id) {
+            return updatedProduct;
+          } else {
+            return product;
+          }
+        })
+      );
+
+      if (
+        cartProducts.filter((prod) => prod.productId === cartItem.productId)
+          .length === 0
+      ) {
+        setCartProducts(cartProducts.concat(cartItem));
+      } else {
+        setCartProducts(
+          cartProducts.map((product) => {
+            if (product.productId === cartItem.productId) {
+              return cartItem;
+            } else {
+              return product;
+            }
+          })
+        );
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleCheckout = async () => {
+    try {
+      await axios.post('/api/checkout');
+      setCartProducts([]);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <div>
-      <Shop onAddProductToCart={handleAddProductToCart} />
+      <Shop cartProducts={cartProducts} onCheckout={handleCheckout} />
       <main>
-        <Products products={products} onProductUpdate={handleProductUpdate} onProductDelete={handleProductDelete} onAddToCart={handleAddToCartButton}/>
-        <AddProduct onProductSubmit={handleProductSubmit}/>
+        <Products
+          products={products}
+          onProductUpdate={handleProductUpdate}
+          onProductDelete={handleProductDelete}
+          onAddToCart={handleAddToCartButton}
+        />
+        <AddProduct onProductSubmit={handleProductSubmit} />
       </main>
     </div>
   );
@@ -103,21 +141,19 @@ export default App;
 Day 2 Todos
 
 FROM yesterday
-- [x] make the products more re-usable
-  - remove edit and turn it into a separate component
-- [x] cancel button on the edit form? - pass down the handleCancel behavior
-
 Cart
-- [x] fetch products from server using axios
-- [ ] add product to cart
-  - [x] cart works with dummy data
-  - [ ] cart works with real data
-- [ ] checkout cart
+- [X] add product to cart
+  - [x] cart works with real data
+  - [x] aggregrate product data
+  - [x] Nice to have - refactor the cart logic
+- [x] checkout cart
+  -  permanently updating the quantity - we need to hit the database with the new quantity
+  -  reset the cart to empty
 
-Product
-- [x] add product to producst
-  - [x] The product doesn't have IDs ??? Do we mess with server? 
-- [x] edit product including connecting to back server
-- [x] delete products
+
+Day 3 Todos
+- [x] Finish above
+- [x] Testing add product to products
+- [] Test shopping cart
 
 */
