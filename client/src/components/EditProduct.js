@@ -1,9 +1,14 @@
+import { useDispatch } from 'react-redux';
+import { productUpdated } from '../actions/productActions';
 import { useState } from 'react';
+import axios from 'axios'
 
-const EditProduct = ({ product, onCancel, onProductUpdate }) => {
+const EditProduct = ({ product, onCancel }) => {
   const [currentTitle, setTitle] = useState(product.title);
   const [currentPrice, setPrice] = useState(product.price);
   const [currentQuantity, setQuantity] = useState(product.quantity);
+
+const dispatch = useDispatch();
 
   const handleTitleChange = (e) => {
     e.preventDefault();
@@ -15,21 +20,25 @@ const EditProduct = ({ product, onCancel, onProductUpdate }) => {
     setPrice(e.target.value);
   };
 
+
   const handleQuantityChange = (e) => {
     e.preventDefault();
     setQuantity(e.target.value);
   };
 
-  const handleProductUpdate = (e) => {
+  const updatedProduct = { _id: product._id, title: currentTitle, price: currentPrice, quantity: currentQuantity};
+
+  const handleProductUpdate = async (e) => {
     e.preventDefault();
-    console.log(product._id);
-    onProductUpdate({
-      _id: product._id,
-      title: currentTitle,
-      price: currentPrice,
-      quantity: currentQuantity,
-    });
-    onCancel();
+    try {
+      const { data } = await axios.put(`/api/products/${product._id}`, {
+        ...updatedProduct,
+      });
+      dispatch(productUpdated(data))
+      onCancel();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (

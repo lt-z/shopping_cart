@@ -1,9 +1,24 @@
 import { useState, useEffect } from 'react';
 import CartItem from './CartItem';
 import CartTotal from './CartTotal';
+import axios from 'axios';
+import { cartProductsReceived, cartProductsCheckedOut } from '../actions/cartProductActions';
+import { useDispatch, useSelector } from 'react-redux';
 
-const Cart = ({ cartProducts, onCheckout }) => {
+const Cart = () => {
+  const dispatch = useDispatch();
+  const cartProducts = useSelector((state) => state.cartProducts);
+
   const [cartTotal, setCartTotal] = useState(0);
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      const { data } = await axios.get('/api/cart');
+      dispatch(cartProductsReceived(data));
+    };
+
+    fetchCart();
+  }, [dispatch]);
 
   useEffect(() => {
     setCartTotal(
@@ -13,9 +28,14 @@ const Cart = ({ cartProducts, onCheckout }) => {
     );
   }, [cartProducts]);
 
-  const handleCheckout = (e) => {
+  const handleCheckout = async (e) => {
     e.preventDefault();
-    onCheckout();
+    try {
+      await axios.post('/api/checkout');
+      dispatch(cartProductsCheckedOut())
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (

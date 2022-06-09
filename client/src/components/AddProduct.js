@@ -1,6 +1,10 @@
+import { useDispatch } from "react-redux";
 import { useState } from 'react';
+import { productAdded } from '../actions/productActions'
+import axios from 'axios';
 
-const AddProduct = ({ onProductSubmit }) => {
+
+const AddProduct = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const addFormClass = showAddForm ? 'add-form visible' : 'add-form';
   const toggleForm = () => setShowAddForm(!showAddForm);
@@ -8,6 +12,9 @@ const AddProduct = ({ onProductSubmit }) => {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
+
+  const dispatch = useDispatch();
+  const newProduct = {title, price, quantity};
 
   const handleTitleChange = (e) => {
     e.preventDefault();
@@ -24,13 +31,16 @@ const AddProduct = ({ onProductSubmit }) => {
     setQuantity(e.target.value);
   };
 
-  const handleProductSubmit = (e) => {
+  const handleProductSubmit = async (e) => {
     e.preventDefault();
-    // setProducts to add on the new product
-    // if there is existing producst, we add on to existing producst the current product that we're adding
-    // else we only need to add on the existing product
 
-    onProductSubmit({ title, price, quantity }, resetInputs);
+    try {
+      const { data } = await axios.post('/api/products', { ...newProduct });
+      dispatch(productAdded(data));
+      resetInputs();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const resetInputs = (e) => {
