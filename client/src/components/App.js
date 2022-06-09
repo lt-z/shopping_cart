@@ -39,5 +39,4 @@ Redux
 - Note: Is it necessary to convert toggle states? 
   - edit products components / toggling showing the edit component?
   - add products form visibiity / uses state on class visivility
-
 */

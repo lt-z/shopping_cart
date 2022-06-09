@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import CartItem from './CartItem';
 import CartTotal from './CartTotal';
 import axios from 'axios';
-import { cartProductsReceived, cartProductsCheckedOut } from '../actions/cartProductActions';
+import {
+  cartProductsReceived,
+  cartProductsCheckedOut,
+} from '../actions/cartProductActions';
 import { useDispatch, useSelector } from 'react-redux';
 
 const Cart = () => {
   const dispatch = useDispatch();
   const cartProducts = useSelector((state) => state.cartProducts);
-
-  const [cartTotal, setCartTotal] = useState(0);
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -20,19 +21,15 @@ const Cart = () => {
     fetchCart();
   }, [dispatch]);
 
-  useEffect(() => {
-    setCartTotal(
-      cartProducts
-        .reduce((sum, prod) => sum + prod.quantity * prod.price, 0)
-        .toFixed(2)
-    );
-  }, [cartProducts]);
+  const cartTotal = cartProducts
+    .reduce((sum, prod) => sum + prod.quantity * prod.price, 0)
+    .toFixed(2);
 
   const handleCheckout = async (e) => {
     e.preventDefault();
     try {
       await axios.post('/api/checkout');
-      dispatch(cartProductsCheckedOut())
+      dispatch(cartProductsCheckedOut());
     } catch (e) {
       console.error(e);
     }
