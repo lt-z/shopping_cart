@@ -4,8 +4,8 @@ import AddProduct from './AddProduct';
 
 const App = () => {
   return (
-    <div>
-      <Shop /> 
+    <div id='app'>
+      <Shop />
       <main>
         <Products />
         <AddProduct />
