@@ -1,13 +1,12 @@
 import EditProduct from './EditProduct';
 import { useState } from 'react';
 import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { productDeleted } from '../actions/productActions';
 import { addToCart } from '../actions/cartProductActions';
 
 const ProductActionButtons = ({ product }) => {
   const dispatch = useDispatch();
-  const cartProducts = useSelector((state) => state.cartProducts);
 
   const [showEdit, setShowEdit] = useState(false);
   const toggleEdit = () => setShowEdit(!showEdit);
@@ -18,6 +17,8 @@ const ProductActionButtons = ({ product }) => {
       const { data } = await axios.post('/api/add-to-cart', {
         productId: product._id,
       });
+
+      console.log(data);
 
       dispatch(addToCart(data));
     } catch (e) {
