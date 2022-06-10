@@ -1,27 +1,31 @@
 const cartProducts = (state = [], action) => {
-  switch(action.type) {
-    case "CART_PRODUCTS_RECEIVED": {
+  switch (action.type) {
+    case 'CART_PRODUCTS_RECEIVED': {
       return state.concat(action.payload);
     }
-    case "CART_PRODUCTS_CHECKED_OUT": {
+    case 'CART_PRODUCTS_CHECKED_OUT': {
       return [];
     }
-    case "CART_PRODUCTS_NEW_ITEM_ADDED": {
-      return state.concat(action.payload);
-    }
-    case "CART_PRODUCTS_EXISTING_ITEM_ADDED": {
-      return state.map((product) => {
-        if (product.productId === action.payload.productId) {
-          return action.payload;
-        } else {
-          return product;
-        }
-      })
+    case 'ADD_TO_CART': {
+      const inCart = state.find(
+        (cart) => cart.productId === action.payload.item.productId
+      );
+      if (!inCart) {
+        return state.concat(action.payload.item);
+      } else {
+        return state.map((cartItem) => {
+          if (cartItem.productId === action.payload.item.productId) {
+            return action.payload.item;
+          } else {
+            return cartItem;
+          }
+        });
+      }
     }
     default: {
       return state;
     }
   }
-}
+};
 
 export default cartProducts;

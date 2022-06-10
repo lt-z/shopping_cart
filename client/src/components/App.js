@@ -17,24 +17,19 @@ const App = () => {
 export default App;
 
 /*
-Day 4
-
-- Converting from now to using Redux 
-
-Redux
-- Create a store
-- create reducers
+Day 5
+- Updating yesterday's syntax to use Redux toolkit and Redux thunk 
 
 - [ ] Products 
-  - [X] Fetching products in its initial state
-  - [x] Handle adding products
-  - [x] Handle deleting products
-  - [x] Handle editing products
+  - [ ] Fetching products in its initial state
+  - [ ] Handle adding products
+  - [ ] Handle deleting products
+  - [ ] Handle editing products
  
-- [x] Cart Products
-  - [x] fetching the current state of the cart (an unchecked out but filled cart)
-  - [x] Adding products to Cart (which involves changing the products state as well as cart state)
-  - [x] Handle checking out products (which is essentially deleting from the cart) - we need to test this
+- [ ] Cart Products
+  - [ ] fetching the current state of the cart (an unchecked out but filled cart)
+  - [ ] Adding products to Cart (which involves changing the products state as well as cart state)
+  - [ ] Handle checking out products (which is essentially deleting from the cart) - we need to test this
 
 - Note: Is it necessary to convert toggle states? 
   - edit products components / toggling showing the edit component?

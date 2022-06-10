@@ -1,11 +1,11 @@
 import EditProduct from './EditProduct';
 import { useState } from 'react';
 import axios from 'axios';
-import { useDispatch, useSelector } from "react-redux";
-import { productDeleted, productUpdated } from '../actions/productActions';
-import { cartProductsExistingItemAdded, cartProductsNewItemAdded } from '../actions/cartProductActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { productDeleted } from '../actions/productActions';
+import { addToCart } from '../actions/cartProductActions';
 
-const ProductActionButtons = ({product}) => {
+const ProductActionButtons = ({ product }) => {
   const dispatch = useDispatch();
   const cartProducts = useSelector((state) => state.cartProducts);
 
@@ -18,21 +18,8 @@ const ProductActionButtons = ({product}) => {
       const { data } = await axios.post('/api/add-to-cart', {
         productId: product._id,
       });
-      const updatedProduct = data.product;
-      const cartItem = data.item;
 
-      // updating product
-      dispatch(productUpdated(updatedProduct));
-
-      // update the cart
-      if (
-        cartProducts.filter((prod) => prod.productId === cartItem.productId)
-          .length === 0
-      ) {
-        dispatch(cartProductsNewItemAdded(cartItem))
-      } else {
-        dispatch(cartProductsExistingItemAdded(cartItem))
-      }
+      dispatch(addToCart(data));
     } catch (e) {
       console.error(e);
     }
@@ -55,12 +42,7 @@ const ProductActionButtons = ({product}) => {
       <button className='button edit' onClick={toggleEdit}>
         Edit
       </button>
-      {showEdit && (
-        <EditProduct
-          product={product}
-          onCancel={toggleEdit}
-        />
-      )}
+      {showEdit && <EditProduct product={product} onCancel={toggleEdit} />}
       <a className='delete-button' onClick={handleProductDelete}>
         <span>X</span>
       </a>
