@@ -1,24 +1,18 @@
 import { useEffect } from 'react';
 import CartItem from './CartItem';
 import CartTotal from './CartTotal';
-import axios from 'axios';
-import {
-  cartProductsReceived,
-  cartProductsCheckedOut,
-} from '../actions/cartProductActions';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { fetchCart, checkoutCart } from '../features/cartProducts/cartProducts';
 
 const Cart = () => {
   const dispatch = useDispatch();
   const cartProducts = useSelector((state) => state.cartProducts);
-
+  const checkoutButton =
+    cartProducts.length === 0 ? 'button checkout disabled' : 'button checkout';
+  const btnDisabled = cartProducts.length === 0 ? true : false;
   useEffect(() => {
-    const fetchCart = async () => {
-      const { data } = await axios.get('/api/cart');
-      dispatch(cartProductsReceived(data));
-    };
-
-    fetchCart();
+    dispatch(fetchCart());
   }, [dispatch]);
 
   const cartTotal = cartProducts
@@ -28,8 +22,7 @@ const Cart = () => {
   const handleCheckout = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/checkout');
-      dispatch(cartProductsCheckedOut());
+      dispatch(checkoutCart());
     } catch (e) {
       console.error(e);
     }
@@ -57,14 +50,13 @@ const Cart = () => {
           </tbody>
         </table>
       )}
-
-      {cartProducts.length === 0 ? (
-        <button className='button checkout disabled'>Checkout</button>
-      ) : (
-        <button className='button checkout' onClick={handleCheckout}>
-          Checkout
-        </button>
-      )}
+      <button
+        className={checkoutButton}
+        disabled={btnDisabled}
+        onClick={handleCheckout}
+      >
+        Checkout
+      </button>
     </div>
   );
 };

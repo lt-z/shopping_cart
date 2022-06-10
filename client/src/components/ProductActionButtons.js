@@ -1,35 +1,32 @@
 import EditProduct from './EditProduct';
 import { useState } from 'react';
-import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import { productDeleted } from '../actions/productActions';
-import { addToCart } from '../actions/cartProductActions';
+import { deleteProduct } from '../features/products/products';
+import { addToCart } from '../features/cartProducts/cartProducts';
 
 const ProductActionButtons = ({ product }) => {
   const dispatch = useDispatch();
-
+  const addToCartBtn =
+    product.quantity === 0
+      ? 'button add-to-cart disabled'
+      : 'button add-to-cart';
+  const btnDisabled = product.quantity === 0 ? true : false;
   const [showEdit, setShowEdit] = useState(false);
   const toggleEdit = () => setShowEdit(!showEdit);
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('/api/add-to-cart', {
-        productId: product._id,
-      });
-
-      console.log(data);
-
-      dispatch(addToCart(data));
+      dispatch(addToCart(product._id));
     } catch (e) {
       console.error(e);
     }
   };
 
   const handleProductDelete = async (e) => {
+    e.preventDefault();
     try {
-      await axios.delete(`/api/products/${product._id}`);
-      dispatch(productDeleted(product._id));
+      dispatch(deleteProduct(product._id));
     } catch (e) {
       console.error(e);
     }
@@ -37,9 +34,14 @@ const ProductActionButtons = ({ product }) => {
 
   return (
     <div className='actions product-actions'>
-      <button className='button add-to-cart' onClick={handleAddToCart}>
+      <button
+        className={addToCartBtn}
+        disabled={btnDisabled}
+        onClick={handleAddToCart}
+      >
         Add to Cart
       </button>
+
       <button className='button edit' onClick={toggleEdit}>
         Edit
       </button>

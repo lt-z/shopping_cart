@@ -1,8 +1,6 @@
-import { useDispatch } from "react-redux";
+import { useDispatch } from 'react-redux';
 import { useState } from 'react';
-import { productAdded } from '../actions/productActions'
-import axios from 'axios';
-
+import { addProduct } from '../features/products/products';
 
 const AddProduct = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -14,7 +12,7 @@ const AddProduct = () => {
   const [quantity, setQuantity] = useState('');
 
   const dispatch = useDispatch();
-  const newProduct = {title, price, quantity};
+  const newProduct = { title, price, quantity };
 
   const handleTitleChange = (e) => {
     e.preventDefault();
@@ -35,8 +33,7 @@ const AddProduct = () => {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post('/api/products', { ...newProduct });
-      dispatch(productAdded(data));
+      dispatch(addProduct(newProduct));
       resetInputs();
     } catch (e) {
       console.error(e);
