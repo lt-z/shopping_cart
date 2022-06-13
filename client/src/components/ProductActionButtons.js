@@ -1,23 +1,30 @@
 import EditProduct from './EditProduct';
-import { useState } from 'react';
+import axios from "axios";
+import { useState, useContext } from 'react';
+import { addToCartReduceProductQuant, deleteProducts, ProductContext } from '../context/product-context';
+import { addToCartProduct, CartProductContext } from '../context/productCart-context';
 
 const ProductActionButtons = ({
   product,
-  onProductUpdate,
-  onProductDelete,
-  onAddToCart,
 }) => {
+  const { dispatch: cartProductsDispatch } = useContext(CartProductContext)
+  const { dispatch: productsDispatch } = useContext(ProductContext);
+
   const [showEdit, setShowEdit] = useState(false);
   const toggleEdit = () => setShowEdit(!showEdit);
 
   const handleProductDelete = (e) => {
     e.preventDefault();
-    onProductDelete(product._id);
+    deleteProducts(productsDispatch, product._id);
   };
 
-  const handleAddToCart = (e) => {
+  const handleAddToCart = async (e) => {
     e.preventDefault();
-    onAddToCart(product._id);
+    const { data } = await axios.post('/api/add-to-cart', {
+      productId: product._id,
+    });
+    addToCartProduct(cartProductsDispatch, data);
+    addToCartReduceProductQuant(productsDispatch, data);
   };
 
   return (
@@ -32,7 +39,6 @@ const ProductActionButtons = ({
         <EditProduct
           product={product}
           onCancel={toggleEdit}
-          onProductUpdate={onProductUpdate}
         />
       )}
       <a className='delete-button' onClick={handleProductDelete}>

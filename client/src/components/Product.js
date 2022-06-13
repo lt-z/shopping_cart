@@ -2,9 +2,6 @@ import ProductActionButtons from './ProductActionButtons';
 
 const Product = ({
   product,
-  onProductUpdate,
-  onProductDelete,
-  onAddToCart,
 }) => {
   return (
     <div className='product'>
@@ -14,9 +11,6 @@ const Product = ({
         <p className='quantity'>{product.quantity} left in stock</p>
         <ProductActionButtons
           product={product}
-          onProductUpdate={onProductUpdate}
-          onProductDelete={onProductDelete}
-          onAddToCart={onAddToCart}
         />
       </div>
     </div>

@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { addProducts } from '../context/product-context';
+import { ProductContext } from '../context/product-context';
 
-const AddProduct = ({ onProductSubmit }) => {
+const AddProduct = () => {
+  const { dispatch: productsDispatch } = useContext(ProductContext);
+
   const [showAddForm, setShowAddForm] = useState(false);
   const addFormClass = showAddForm ? 'add-form visible' : 'add-form';
   const toggleForm = () => setShowAddForm(!showAddForm);
@@ -26,11 +30,7 @@ const AddProduct = ({ onProductSubmit }) => {
 
   const handleProductSubmit = (e) => {
     e.preventDefault();
-    // setProducts to add on the new product
-    // if there is existing producst, we add on to existing producst the current product that we're adding
-    // else we only need to add on the existing product
-
-    onProductSubmit({ title, price, quantity }, resetInputs);
+    addProducts(productsDispatch, { title, price, quantity }, resetInputs)
   };
 
   const resetInputs = (e) => {

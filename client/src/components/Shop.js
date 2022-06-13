@@ -1,10 +1,10 @@
 import Cart from './Cart';
 
-const Shop = ({ cartProducts, onCheckout }) => {
+const Shop = () => {
   return (
     <header>
       <h1>The Shop!</h1>
-      <Cart cartProducts={cartProducts} onCheckout={onCheckout} />
+      <Cart />
     </header>
   );
 };

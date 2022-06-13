@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { updateProducts, ProductContext } from '../context/product-context';
 
 const EditProduct = ({ product, onCancel, onProductUpdate }) => {
+  const {dispatch: updateProductsDispatch } = useContext(ProductContext);
+
   const [currentTitle, setTitle] = useState(product.title);
   const [currentPrice, setPrice] = useState(product.price);
   const [currentQuantity, setQuantity] = useState(product.quantity);
@@ -22,13 +25,12 @@ const EditProduct = ({ product, onCancel, onProductUpdate }) => {
 
   const handleProductUpdate = (e) => {
     e.preventDefault();
-    console.log(product._id);
-    onProductUpdate({
+    updateProducts(updateProductsDispatch, {
       _id: product._id,
       title: currentTitle,
       price: currentPrice,
       quantity: currentQuantity,
-    });
+    }, product._id)
     onCancel();
   };
 

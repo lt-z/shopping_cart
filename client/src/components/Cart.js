@@ -1,21 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import CartItem from './CartItem';
 import CartTotal from './CartTotal';
 
-const Cart = ({ cartProducts, onCheckout }) => {
-  const [cartTotal, setCartTotal] = useState(0);
+import { fetchCartProducts, CartProductContext, checkoutCart } from '../context/productCart-context';
+
+const Cart = () => {
+  const { cartProducts, dispatch: cartProductsDispatch } = useContext(CartProductContext);
 
   useEffect(() => {
-    setCartTotal(
-      cartProducts
-        .reduce((sum, prod) => sum + prod.quantity * prod.price, 0)
-        .toFixed(2)
-    );
-  }, [cartProducts]);
+    fetchCartProducts(cartProductsDispatch)
+  }, [cartProductsDispatch])
+  
+  const cartTotal = cartProducts
+    .reduce((sum, prod) => sum + prod.quantity * prod.price, 0)
+    .toFixed(2);
 
   const handleCheckout = (e) => {
     e.preventDefault();
-    onCheckout();
+    checkoutCart(cartProductsDispatch)
   };
 
   return (
